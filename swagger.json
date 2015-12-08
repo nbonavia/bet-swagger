@@ -284,7 +284,7 @@
                 }
             }
         },
-        "/expenses/{id}": {
+        "/expenses/search": {
             "get": {
                 "summary": "Find Expenses By Search Criteria",
                 "description": "Returns a list of Expenses based on the search criteria provided in query string parameters",
@@ -333,6 +333,50 @@
                         "description": "OK - Returns the Paged Expenses",
                         "schema": {
                             "$ref": "#/definitions/PagedExpenses"
+                        }
+                    },
+                    "401": {
+                        "description": "Incorrect Credentials",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden / Blocked",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Expense"
+                ]
+            }
+        },
+        "/expenses/{id}": {
+            "get": {
+                "summary": "Get Expense By Id",
+                "description": "Returns the expense with the id provided in the url",
+                "security": [
+                    {
+                        "token": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "number",
+                        "format": "int64",
+                        "description": "The expense id that will be returned",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Returns the Expense",
+                        "schema": {
+                            "$ref": "#/definitions/Expense"
                         }
                     },
                     "401": {
