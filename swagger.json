@@ -28,6 +28,15 @@
             "token": []
         }
     ],
+    "parameters": {
+        "token": {
+            "name": "token",
+            "in": "header",
+            "description": "Security token",
+            "type": "string",
+            "required": "yes"
+        }
+    },
     "paths": {
         "/sessions": {
             "post": {
@@ -51,11 +60,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "OK - Returns an http header named 'token' including the token provided",
                         "headers": {
-                            "Location": {
-                                "description": "Login was successful.",
-                                "type": "string"
+                            "token": {
+                                "type": "string",
+                                "description": "Security token"
                             }
                         }
                     },
@@ -79,7 +88,11 @@
             "put": {
                 "summary": "Keep-Alive",
                 "description": "The authentication token will have an expiry time and when the token expires, all API endpoints that require a valid token will return an HTTP Status 403 (forbidden). This situation can occur if the user is interacting with the app, but he leaves the mobile in the same screen until the token expires. He will still be considered as logged in for the app's purposes, but the token will expire, and API calls start to fail.An easy and clean solution for this problem is to have a Keep-Alive service, and if the app is running, the app will automatically hit this endpoint upon fixed times (say every 5-10 minutes, as advised by the API developers) so that if the token is about to expire, the API will renew the token so that the authentication will be retained.",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    }
+                ],
                 "security": [
                     {
                         "token": []
@@ -114,7 +127,11 @@
                 "tags": [
                     "Currency"
                 ],
-                "parameters": [],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    }
+                ],
                 "security": [
                     {
                         "token": []
@@ -152,7 +169,11 @@
                 "tags": [
                     "ExpenseType"
                 ],
-                "parameters": [],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    }
+                ],
                 "security": [
                     {
                         "token": []
@@ -191,6 +212,9 @@
                     "Trips"
                 ],
                 "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
                     {
                         "in": "path",
                         "name": "id",
@@ -233,6 +257,9 @@
                     "Trips"
                 ],
                 "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
                     {
                         "in": "path",
                         "name": "id",
@@ -294,6 +321,9 @@
                     }
                 ],
                 "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
                     {
                         "in": "query",
                         "name": "pageNumber",
@@ -364,6 +394,9 @@
                 ],
                 "parameters": [
                     {
+                        "$ref": "#/parameters/token"
+                    },
+                    {
                         "in": "path",
                         "name": "id",
                         "type": "number",
@@ -412,6 +445,9 @@
                 ],
                 "parameters": [
                     {
+                        "$ref": "#/parameters/token"
+                    },
+                    {
                         "in": "body",
                         "name": "expense",
                         "description": "The expense object that will be persisted. If a trip object is defined inside the Expense Create Request model, then a trip will be created and associated with the expense",
@@ -452,6 +488,9 @@
                     "Expense"
                 ],
                 "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
                     {
                         "name": "id",
                         "in": "path",
@@ -504,6 +543,9 @@
                 ],
                 "parameters": [
                     {
+                        "$ref": "#/parameters/token"
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "description": "",
@@ -544,6 +586,9 @@
                     "Receipts"
                 ],
                 "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
                     {
                         "in": "query",
                         "name": "expenseId",
@@ -597,6 +642,9 @@
                     "Receipts"
                 ],
                 "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
                     {
                         "name": "id",
                         "in": "path",
