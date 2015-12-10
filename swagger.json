@@ -284,7 +284,7 @@
                 }
             }
         },
-        "/expenses/search": {
+        "/expenses-search": {
             "get": {
                 "summary": "Find Expenses By Search Criteria",
                 "description": "Returns a list of Expenses based on the search criteria provided in query string parameters",
@@ -349,7 +349,7 @@
                     }
                 },
                 "tags": [
-                    "Expense"
+                    "Expense-Search"
                 ]
             }
         },
@@ -949,6 +949,10 @@
                     "type": "string",
                     "description": "If the trip has been rejected, the manager can add a note informing the user why the trip has been rejected. Field is expected to be null if the status is not REJECTED",
                     "required": false
+                },
+                "reviewer": {
+                    "type": "string",
+                    "description": "The reviewer who reviewed this expense. This will be provided only after the expense has been reviewed."
                 },
                 "breakfastCount": {
                     "type": "number",
