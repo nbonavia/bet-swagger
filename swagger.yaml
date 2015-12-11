@@ -582,7 +582,8 @@ definitions:
       message:
         type: string
         description: Error messge description describing the error message returned by the server
-
+        required: true
+        
   Credentials:
     type: object
     properties:
@@ -590,13 +591,16 @@ definitions:
         type: string
         description: The user name
         example: johndoe
+        required: true
       password:
         type: string
         description: The user's password
+        required: true
       deviceid:
         type: string
         description: The app will pick up the unique device's id and use together with the authentication credentials. The device might be blocked in case the user has lost his mobile phone
-      
+        required: true
+        
   Currency:
     type: object
     properties:
@@ -625,10 +629,12 @@ definitions:
         format: int32
         description: The Expense type reference (possibly an autonumber set up on the server
         example: 1
+        required: true
       name:
         type: string
         description: The name, that will be displayed on the screen
         example: Fitness
+        required: true
         
   Trip:
     type: object
@@ -687,6 +693,7 @@ definitions:
         format: int64
         description: The receipt's id. This property will be null when a new receipt is being created by the client.
         example: 100
+        required: false
       type:
         type: string
         description: Trip type, being one of the enum values provided
@@ -703,11 +710,14 @@ definitions:
         type: string
         description: Expense description
         example: Taxi to hotel
+        required: false
       currency:
         description: Stamp of the currency object, including conversion rate at the time when the receipt was created
         $ref: '#/definitions/Currency'
+        required: true
       expenseType:
         $ref: '#/definitions/ExpenseType'
+        required: true
       amount:
         type: number
         format: double
@@ -718,13 +728,16 @@ definitions:
         type: string
         format: yyyy-MM-dd'T'HH:mm:ss'Z'
         description: Date and time when the receipt was registered
+        required: true
       note:
         type: string
         description: This is a special instruction that the user wants to add to the note
+        required: false
       scanUrl:
         type: string
         description: If a scanned image is uploaded, then this field will contain an absolute url to an image that the app can download to display in a list
-
+        required: false
+        
   ExpenseUpdateRequest:
     type: object
     description: The expense update request model
