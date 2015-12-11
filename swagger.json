@@ -632,6 +632,102 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "summary": "Update Receipt",
+                "description": "A receipt can be updated. The receipt id cannot be updated by the server because it will disrupt all the links.",
+                "tags": [
+                    "Receipt"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The receipt id to update",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "receipt",
+                        "description": "The receipt object that will be updated",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Receipt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Returns the matched Receipt",
+                        "schema": {
+                            "$ref": "#/definitions/Receipt"
+                        }
+                    },
+                    "401": {
+                        "description": "Incorrect Credentials",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden / Blocked",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "404": {
+                        "description": "This is an http status indicating that no receipt matched the id provided.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete Receipt",
+                "description": "Delete a receipt by the *id* provided. The Process will delete the Receipt, Scan image and associated expense receipt link as well. The API developer can opt for physical / virtual deletion as necessary.",
+                "tags": [
+                    "Receipt"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/token"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The receipt id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Incorrect Credentials",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden / Blocked",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "404": {
+                        "description": "This is an http status indicating that no receipt matched the id provided.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
             }
         },
         "/receipt/{id}/upload": {
@@ -640,6 +736,9 @@
                 "description": "When a receit is created, the app will upload the receipt scan using a multipart/form-data request. The uploaded file will have its filename as [receiptId]. jpg/png/gif. If possible (to check with Infusion), the API will return the associated Receipt object. Content-type header must be set to multipart/form-data.",
                 "tags": [
                     "Receipts"
+                ],
+                "consumes": [
+                    "multipart/form-data"
                 ],
                 "parameters": [
                     {
@@ -652,13 +751,6 @@
                         "required": true,
                         "type": "number",
                         "format": "int64"
-                    },
-                    {
-                        "name": "data",
-                        "in": "body",
-                        "description": "The image binary data that needs to be uploaded and associated with a receipt",
-                        "type": "string",
-                        "required": true
                     }
                 ],
                 "security": [
