@@ -109,12 +109,12 @@ paths:
           schema:
             $ref: '#/definitions/Error'
   
-  /expensetypes:
+  /receipttypes:
     get:
-      summary: Get Expense Types
-      description: This service will retrieve a list of all available expense types defined by business. Data is returned in alphabetical order sorted by name. The expense types are required by the API in order to be able to determine who will be the manager who needs to authorise which expense.
+      summary: Get Receipt Types
+      description: This service will retrieve a list of all available receipt types defined by business. Data is returned in alphabetical order sorted by name. The receipt types are required by the API in order to be able to determine who will be the manager who needs to authorise which expense.
       tags:
-        - ExpenseType
+        - ReceiptType
       parameters:
         - $ref: '#/parameters/token'
       security:
@@ -125,7 +125,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/ExpenseType'
+              $ref: '#/definitions/ReceiptType'
         '401':
           description: Incorrect Credentials
           schema:
@@ -165,34 +165,6 @@ paths:
           schema:
             $ref: '#/definitions/Error'
             
-    # post:
-    #   summary: Create Trip
-    #   description: 'Creates a new trip'
-    #   tags:
-    #     - Trips
-    #   parameters:
-    #     - in: body
-    #       name: trip
-    #       description: The trip object you want to persist
-    #       required: true
-    #       schema:
-    #         $ref: '#/definitions/Trip'
-    #   security:
-    #     - token: []
-    #   responses:
-    #     '200':
-    #       description: OK - Returns the created trip including the id created by the API
-    #       schema:
-    #         $ref: '#/definitions/Trip'
-    #     '401':
-    #       description: Incorrect Credentials
-    #       schema:
-    #         $ref: '#/definitions/Error'
-    #     '403':
-    #       description: Forbidden / Blocked
-    #       schema:
-    #         $ref: '#/definitions/Error'
-            
     put:
       summary: Update Trip
       description: Loads the trip with the id provided and update the data accordingly
@@ -231,35 +203,7 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/Error'
-            
-    # delete:
-    #   summary: Delete a trip
-    #   description: Deletes a Trip, all expenses and Receipts associated with it. The user will only be allowed to delete trips that are associated with expenses that have not yet been submitted to the manager (status = OPEN). Deleting a trip will automatically remove all corresponding expenses & recepits associated with it.
-    #   tags:
-    #     - Trips
-    #   parameters:
-    #     - name: id
-    #       in: path
-    #       description: The trip id that is being deleted
-    #       required: true
-    #       type: string
-    #   security:
-    #     - token: []
-    #   responses:
-    #       '200':
-    #         description: OK
-    #       '401':
-    #         description: Incorrect Credentials
-    #         schema:
-    #           $ref: '#/definitions/Error'
-    #       '403':
-    #         description: Forbidden / Blocked
-    #         schema:
-    #           $ref: '#/definitions/Error'
-    #       '404':
-    #         description: Not Found
-    #         schema:
-    #           $ref: '#/definitions/Error'
+          
   
   '/expenses-search':
     get:
@@ -413,6 +357,8 @@ paths:
       summary: Delete Expense
       description: >+
          Delete a expense by the *id* provided. The Process will delete the expense, associated trip (if any) and also any the associated scanned receipts. The API developer can opt for physical / virtual deletion as necessary.
+         
+         <b>The api must ensures that the expense is associated with the user requesting the expense deletion and return an http status 403 if the user and image are not associated.</b>
       tags:
         - Expense
       parameters:
@@ -434,11 +380,11 @@ paths:
           schema:
             $ref: '#/definitions/Error'
         '404':
-          description: This is an http status indicating that no expense matched the id provided.
+          description: This is an http status indicating that no expense matched the id  provided or the user is not associated with the expense.
           schema:
             $ref: '#/definitions/Error'
           
-  '/receipt/{id}':
+  '/receipts/{id}':
     post:
       summary: Create a receipt
       description: When a receipt is created, the image url will not be provided inside the payload, mainly because encoding image data inside a json payload will triple the data size and is not considered as a best practice to include binary data inside a json file.
@@ -478,7 +424,7 @@ paths:
       summary: Update Receipt
       description: A receipt can be updated. The receipt id cannot be updated by the server because it will disrupt all the links.
       tags:
-        - Receipt
+        - Receipts
       parameters:
         - $ref: '#/parameters/token'
         - name: id
@@ -513,9 +459,11 @@ paths:
     delete:
       summary: Delete Receipt
       description: >+
-         Delete a receipt by the *id* provided. The Process will delete the Receipt, Scan image and associated expense receipt link as well. The API developer can opt for physical / virtual deletion as necessary.
+         Delete a receipt by the *id* provided. The Process will delete the Receipt, Scanned images and associated expense receipt link as well. The API developer can opt for physical / virtual deletion as necessary.
+         
+         <b>The api must ensures that the receipt is associated with the user requesting the receipt deletion and return an http status 403 if the user and image are not associated.</b>
       tags:
-        - Receipt
+        - Receipts
       parameters:
         - $ref: '#/parameters/token'
         - name: id
@@ -535,14 +483,14 @@ paths:
           schema:
             $ref: '#/definitions/Error'
         '404':
-          description: This is an http status indicating that no receipt matched the id provided.
+          description: This is an http status indicating that no receipt matched the id provided or the user is not associated with the receipt.
           schema:
             $ref: '#/definitions/Error'
             
-  '/receipt/{id}/upload':
+  '/receipts/{id}/upload':
     post:
       summary: Upload Receipt Scan
-      description: When a receit is created, the app will upload the receipt scan using a multipart/form-data request. The uploaded file will have its filename as [receiptId]. jpg/png/gif. If possible (to check with Infusion), the API will return the associated Receipt object. Content-type header must be set to multipart/form-data.
+      description: When a receipt is created, the app will upload and added to the receipt's scanned image list using a multipart/form-data request. The uploaded file will be stored by api and this endpoint will return the full receipt object including the newly uploaded image references. Content-type header must be set to multipart/form-data. Supported images are jpg / png / gif.
       tags:
         - Receipts
       consumes:
@@ -575,6 +523,40 @@ paths:
           schema:
             $ref: '#/definitions/Error'
 
+  '/images/{id}':
+    delete:
+      summary: Delete the requested Scanned image
+      description: >+
+        This api call allows the deletion of an existing scanned image by the image id. When the image is deleted. This api call will return the resulting receipt object with the deleted image.
+      
+        <b>The api must ensures that the image is associated with the user requesting the image deletion and return an http status 403 if the user and image are not associated.</b>
+      tags:
+        - Images
+      parameters:
+        - $ref: '#/parameters/token'
+        - name: id
+          in: path
+          description: 'The receipt id'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK - Returns the matched receipt
+          schema:
+            $ref: '#/definitions/Receipt'
+        '401':
+          description: Incorrect Credentials
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden / Blocked
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: This is an http status indicating that no image matched the id provided or the logged-in user is not associated with the image
+          schema:
+            $ref: '#/definitions/Error'
+            
 definitions:
   Error:
     type: object
@@ -583,7 +565,22 @@ definitions:
         type: string
         description: Error messge description describing the error message returned by the server
         required: true
-        
+  
+  Image:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+        description: The image's id
+        example: 1
+        required: true
+      imageUrl:
+        type: string
+        description: Full url referencing the image resource that can be downloaded from the internet
+        example: http://www.example.com/10001/rec1.jpg
+        required: true
+      
   Credentials:
     type: object
     properties:
@@ -621,19 +618,19 @@ definitions:
         format: double
         example: 1.0
         
-  ExpenseType:
+  ReceiptType:
     type: object
     properties:
       id:
         type: number
         format: int32
-        description: The Expense type reference (possibly an autonumber set up on the server
+        description: The Receipt type reference (possibly an autonumber set up on the server
         example: 1
         required: true
       name:
         type: string
-        description: The name, that will be displayed on the screen
-        example: Fitness
+        description: The name, that will be displayed on the Receipt data entry screen
+        example: Fitness, Transport
         required: true
         
   Trip:
@@ -645,9 +642,9 @@ definitions:
         description: The trip's id. This property will be null when a new trip is being created by the client.
         example: 1001
         required: false
-      type:
+      purpose:
         type: string
-        description: Trip type, being one of the enum values provided
+        description: the trip's purpose, which could be any of the fixed enum values
         enum:
           - BUSINESS
           - MARKETING
@@ -684,7 +681,22 @@ definitions:
       privateAccomodation: 
         type: boolean
         description: Enabled if the accomodation is not going to be paid by the company. Default is false
-      
+      breakfastCount:
+        type: number
+        format: int32
+        description: The amount of breakfasts that the employee is not paying for
+        required: false
+      lunchCount:
+        type: number
+        format: int32
+        description: The amount of lunches that the employee is not paying for
+        required: false
+      dinnerCount:
+        type: number
+        format: int32
+        description: The amount of dinners that the employee is not paying for
+        required: false
+        
   Receipt:
     type: object
     properties:
@@ -694,9 +706,9 @@ definitions:
         description: The receipt's id. This property will be null when a new receipt is being created by the client.
         example: 100
         required: false
-      type:
+      purpose:
         type: string
-        description: Trip type, being one of the enum values provided
+        description: the receipt's purpose, which could be any of the fixed enum values
         enum:
           - BUSINESS
           - MARKETING
@@ -715,8 +727,8 @@ definitions:
         description: Stamp of the currency object, including conversion rate at the time when the receipt was created
         $ref: '#/definitions/Currency'
         required: true
-      expenseType:
-        $ref: '#/definitions/ExpenseType'
+      receiptType:
+        $ref: '#/definitions/ReceiptType'
         required: true
       amount:
         type: number
@@ -733,9 +745,12 @@ definitions:
         type: string
         description: This is a special instruction that the user wants to add to the note
         required: false
-      scanUrl:
-        type: string
-        description: If a scanned image is uploaded, then this field will contain an absolute url to an image that the app can download to display in a list
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/Image'
+          required: false
+        description: If scanned images are uploaded, then this field will contain a list of image objects containing the absolute url to an image that the app can download to display in a list
         required: false
         
   ExpenseUpdateRequest:
@@ -760,21 +775,7 @@ definitions:
           - APPROVED_REVISED
           - REJECTED
         required: true
-      breakfastCount:
-        type: number
-        format: int32
-        description: The amount of breakfasts that the employee is not paying for
-        required: false
-      lunchCount:
-        type: number
-        format: int32
-        description: The amount of lunches that the employee is not paying for
-        required: false
-      dinnerCount:
-        type: number
-        format: int32
-        description: The amount of dinners that the employee is not paying for
-        required: false
+
         
   ExpenseCreateRequest:
     type: object
@@ -797,7 +798,7 @@ definitions:
         example: 1003
         required: true
       type:
-        type: string
+        expenseType: string
         description: An enumeration value indicating the type of expense it is. Currently only Trip / one-of expenses are supported, but we might have more in the future.
         enum:
           - TRIP
@@ -834,21 +835,6 @@ definitions:
       reviewer:
         type: string
         description: The reviewer who reviewed this expense. This will be provided only after the expense has been reviewed.
-      breakfastCount:
-        type: number
-        format: int32
-        description: The amount of breakfasts that the employee is not paying for
-        required: false
-      lunchCount:
-        type: number
-        format: int32
-        description: The amount of lunches that the employee is not paying for
-        required: false
-      dinnerCount:
-        type: number
-        format: int32
-        description: The amount of dinners that the employee is not paying for
-        required: false
 
   PagedExpenses:
     type: object
@@ -865,3 +851,4 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Expense'
+        required: true
