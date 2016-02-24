@@ -99,7 +99,7 @@
                     }
                 ],
                 "tags": [
-                    "Session"
+                    "Sessions"
                 ],
                 "responses": {
                     "200": {
@@ -478,14 +478,14 @@
                     }
                 },
                 "tags": [
-                    "Expense"
+                    "Expenses"
                 ]
             },
             "put": {
                 "summary": "Update Expense",
                 "description": "An expense can be updated",
                 "tags": [
-                    "Expense"
+                    "Expenses"
                 ],
                 "parameters": [
                     {
@@ -539,7 +539,7 @@
                 "summary": "Delete Expense",
                 "description": "Delete a expense by the *id* provided. The Process will delete the expense, associated trip (if any) and also any the associated scanned receipts. The API developer can opt for physical / virtual deletion as necessary.\n<b>The api must ensures that the expense is associated with the user requesting the expense deletion and return an http status 403 if the user and image are not associated.</b>",
                 "tags": [
-                    "Expense"
+                    "Expenses"
                 ],
                 "parameters": [
                     {
