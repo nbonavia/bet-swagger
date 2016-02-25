@@ -730,12 +730,12 @@
                 }
             }
         },
-        "/receipts/{id}/upload": {
+        "/images/{id}": {
             "post": {
                 "summary": "Upload Receipt Scan",
                 "description": "When a receipt is created, the app will upload and added to the receipt's scanned image list using a multipart/form-data request. The uploaded file will be stored by api and this endpoint will return the full receipt object including the newly uploaded image references. Content-type header must be set to multipart/form-data. Supported images are jpg / png / gif.",
                 "tags": [
-                    "Receipts"
+                    "Images"
                 ],
                 "consumes": [
                     "multipart/form-data"
@@ -784,9 +784,7 @@
                         }
                     }
                 }
-            }
-        },
-        "/images/{id}": {
+            },
             "delete": {
                 "summary": "Delete the requested Scanned image",
                 "description": "This api call allows the deletion of an existing scanned image by the image id. When the image is deleted. This api call will return the resulting receipt object with the deleted image. <b>The api must ensures that the image is associated with the user requesting the image deletion and return an http status 403 if the user and image are not associated.</b>",
@@ -964,13 +962,13 @@
                     "example": "Stockholm",
                     "required": true
                 },
-                "departure": {
+                "departureDate": {
                     "type": "string",
                     "description": "This is the departure date and time",
                     "format": "yyyy-MM-dd'T'HH:mm:ss'Z'",
                     "required": true
                 },
-                "return": {
+                "returnDate": {
                     "type": "string",
                     "description": "This is the trip's return date and time",
                     "format": "yyyy-MM-dd'T'HH:mm:ss'Z'",
@@ -981,7 +979,7 @@
                     "description": "Additional notes that the user might provide together with this trip",
                     "required": true
                 },
-                "privateAccomodation": {
+                "hasPrivateAccomodation": {
                     "type": "boolean",
                     "description": "Enabled if the accomodation is not going to be paid by the company. Default is false"
                 },
@@ -1037,12 +1035,15 @@
                     "required": false
                 },
                 "currency": {
-                    "description": "Stamp of the currency object, including conversion rate at the time when the receipt was created",
+                    "description": "Stamp of the currency object, including conversion rate at the time when the receipt was created. This is useful so that when currency changes, one can determine the currency rate on the day when the receipt was taken.",
                     "$ref": "#/definitions/Currency",
                     "required": true
                 },
-                "receiptType": {
-                    "$ref": "#/definitions/ReceiptType",
+                "receiptTypeId": {
+                    "type": "number",
+                    "format": "int43",
+                    "description": "The receipt type's id. This field identifies the type of receipt from a selected list",
+                    "example": 1,
                     "required": true
                 },
                 "amount": {
