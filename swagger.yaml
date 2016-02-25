@@ -396,14 +396,14 @@ paths:
           name: expenseId
           type: number
           format: int64
-          description: When provided, the receipt will be associated with the expense requested
+          description: When provided, the receipt will be associated with the expense requested. Images will not be included because they are not updated by this endpoint
           required: false
         - in: body
           name: receipt
           description: The receipt object that will be persisted
           required: true
           schema:
-            $ref: '#/definitions/Receipt'
+            $ref: '#/definitions/ReceiptRequest'
       security:
         - token: []
       responses:
@@ -434,10 +434,10 @@ paths:
           type: string
         - in: body
           name: receipt
-          description: The receipt object that will be updated
+          description: The receipt object that will be updated, without images because they are not updated by this endpoint
           required: true
           schema:
-            $ref: '#/definitions/Receipt'
+            $ref: '#/definitions/ReceiptRequest'
       responses:
         '200':
           description: OK - Returns the matched Receipt
@@ -694,16 +694,10 @@ definitions:
         format: int32
         description: The amount of dinners that the employee is not paying for
         required: false
-        
-  Receipt:
+  
+  ReceiptRequest: 
     type: object
     properties:
-      id:
-        type: number
-        format: int64
-        description: The receipt's id. This property will be null when a new receipt is being created by the client.
-        example: 100
-        required: false
       purpose:
         type: string
         description: the receipt's purpose, which could be any of the fixed enum values
@@ -737,14 +731,26 @@ definitions:
         description: The amount that is displayed on the receipt that the user entered, and will be vetted by the manager.
         example: 1.0
         required: true
-      date:
+      creationDate:
         type: string
         format: yyyy-MM-dd'T'HH:mm:ss'Z'
-        description: Date and time when the receipt was registered
+        description: Date and time when the receipt was created
         required: true
       note:
         type: string
         description: This is a special instruction that the user wants to add to the note
+        required: false
+        
+  Receipt:
+    type: object
+    allof:
+      - $ref: '#/definitions/ReceiptRequest'
+    properties:
+      id:
+        type: number
+        format: int64
+        description: The receipt's id. This property will be null when a new receipt is being created by the client.
+        example: 100
         required: false
       images:
         type: array
