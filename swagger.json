@@ -1061,7 +1061,8 @@
         },
         "Receipt": {
             "type": "object",
-            "allof": [
+            "description": "The receipt object",
+            "allOf": [
                 {
                     "$ref": "#/definitions/ReceiptRequest"
                 }
@@ -1089,7 +1090,7 @@
             "type": "object",
             "description": "The expense update request model",
             "properties": {
-                "receipts": {
+                "receiptIds": {
                     "type": "array",
                     "items": {
                         "type": "number",
@@ -1116,7 +1117,7 @@
         "ExpenseCreateRequest": {
             "type": "object",
             "description": "The expense creation request",
-            "allof": [
+            "allOf": [
                 {
                     "$ref": "#/definitions/ExpenseUpdateRequest"
                 }
