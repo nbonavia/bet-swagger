@@ -963,13 +963,13 @@
                     "required": true
                 },
                 "departureDate": {
-                    "type": "string",
+                    "type": "string (yyyy-MM-dd'T'HH:mm:ss'Z')",
                     "description": "This is the departure date and time",
                     "format": "yyyy-MM-dd'T'HH:mm:ss'Z'",
                     "required": true
                 },
                 "returnDate": {
-                    "type": "string",
+                    "type": "string (yyyy-MM-dd'T'HH:mm:ss'Z')",
                     "description": "This is the trip's return date and time",
                     "format": "yyyy-MM-dd'T'HH:mm:ss'Z'",
                     "required": true
@@ -1047,7 +1047,7 @@
                     "required": true
                 },
                 "creationDate": {
-                    "type": "string",
+                    "type": "string (yyyy-MM-dd'T'HH:mm:ss'Z')",
                     "format": "yyyy-MM-dd'T'HH:mm:ss'Z'",
                     "description": "Date and time when the receipt was created",
                     "required": true
@@ -1162,7 +1162,7 @@
                     "required": false
                 },
                 "statusTimestamp": {
-                    "type": "string",
+                    "type": "string (yyyy-MM-dd'T'HH:mm:ss'Z')",
                     "format": "yyyy-MM-dd'T'HH:mm:ss'Z'",
                     "description": "The timestamp of the date the last status was updated. This is updated by the server.",
                     "required": true
