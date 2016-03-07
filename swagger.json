@@ -798,14 +798,14 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "The receipt id",
+                        "description": "The image id",
                         "required": true,
                         "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK - Returns the matched receipt",
+                        "description": "OK - Returns the updated receipt object that contained the deleted image",
                         "schema": {
                             "$ref": "#/definitions/Receipt"
                         }
@@ -1090,16 +1090,6 @@
             "type": "object",
             "description": "The expense update request model",
             "properties": {
-                "receiptIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "number",
-                        "format": "int64",
-                        "description": "This is a collection of receipt ids that will be managed by this expense definition",
-                        "collectionFormat": "multi"
-                    },
-                    "required": false
-                },
                 "status": {
                     "type": "string",
                     "description": "Expense's current status",
